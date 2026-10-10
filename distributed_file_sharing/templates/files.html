@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Files - Distributed File Sharing</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<nav class="navbar">
+    <div class="brand">☁ Distributed File Sharing</div>
+    <div class="nav-links">
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('upload') }}">Upload</a>
+        <a class="active" href="{{ url_for('files') }}">Files</a>
+    </div>
+</nav>
+
+<main class="page wide">
+    <section class="panel">
+        <div class="files-header">
+            <div>
+                <h1>Available Files</h1>
+                <p class="muted">Search, view and download files stored on the server.</p>
+            </div>
+            <a class="btn primary" href="{{ url_for('upload') }}">+ Upload File</a>
+        </div>
+
+        <!-- NEW FEATURE: File Search -->
+        <form class="search-box" method="GET" action="{{ url_for('files') }}">
+            <span class="search-icon">⌕</span>
+            <input
+                type="search"
+                name="q"
+                value="{{ search }}"
+                placeholder="Search files by name..."
+                autocomplete="off"
+            >
+            {% if search %}
+                <a class="clear-search" href="{{ url_for('files') }}">Clear</a>
+            {% endif %}
+            <button class="btn primary search-btn" type="submit">Search</button>
+        </form>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="alert {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+
+        {% if search %}
+            <div class="search-result">
+                Search results for <strong>"{{ search }}"</strong> —
+                {{ files|length }} file{% if files|length != 1 %}s{% endif %} found
+            </div>
+        {% endif %}
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>File Name</th>
+                        <th>Size</th>
+                        <th>Uploaded At</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for file in files %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>
+                            <div class="file-name">
+                                <span class="file-icon">📄</span>
+                                {{ file.name }}
+                            </div>
+                        </td>
+                        <td>{{ file.size }}</td>
+                        <td>{{ file.uploaded_at }}</td>
+                        <td>
+                            <a class="download-btn"
+                               href="{{ url_for('download', filename=file.name) }}">
+                               ↓ Download
+                            </a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="empty">
+                            {% if search %}
+                                No files found for "{{ search }}".
+                            {% else %}
+                                No files have been uploaded yet.
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>

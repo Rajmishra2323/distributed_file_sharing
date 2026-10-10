@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload File - Distributed File Sharing</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<nav class="navbar">
+    <div class="brand">☁ Distributed File Sharing</div>
+    <div class="nav-links">
+        <a href="{{ url_for('home') }}">Home</a>
+        <a class="active" href="{{ url_for('upload') }}">Upload</a>
+        <a href="{{ url_for('files') }}">Files</a>
+    </div>
+</nav>
+
+<main class="page">
+    <section class="panel upload-panel">
+        <div class="page-icon">☁</div>
+        <h1>Upload File</h1>
+        <p class="muted">Select a file to save it on the server.</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="alert {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+
+        <form action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
+            <label class="file-input">
+                <span>Choose File</span>
+                <input type="file" name="file" required>
+            </label>
+            <button class="btn primary full" type="submit">Upload</button>
+        </form>
+
+        <p class="hint">Maximum file size: 100 MB</p>
+    </section>
+</main>
+</body>
+</html>
